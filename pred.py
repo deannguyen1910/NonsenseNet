@@ -1,10 +1,10 @@
 import torch
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
-from model import BaseNet
+from model import NonsenseNet
 
 # Initialize model
-model = BaseNet()
+model = NonsenseNet()
 model.load("data/output.pth")  # Load weights from output.pth
 model.eval()
 

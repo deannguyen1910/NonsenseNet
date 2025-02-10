@@ -3,7 +3,7 @@ import torch.optim as optim
 import torch.nn as nn
 import pickle
 import numpy as np
-from model import BaseNet
+from model import NonsenseNet
 from torch.utils.data import DataLoader, TensorDataset
 import subprocess  # To run eval.py
 import os
@@ -42,7 +42,7 @@ train_dataset = TensorDataset(train_data, train_labels)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
 # Initialize model
-model = BaseNet().to(device)
+model = NonsenseNet().to(device)
 
 # Kaiming He Initialization Function
 def kaiming_init(m):

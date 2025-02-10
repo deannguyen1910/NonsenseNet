@@ -1,7 +1,7 @@
 import sys
 import torch
 import torch.nn as nn
-from model import BaseNet
+from model import NonsenseNet
 import pickle
 import numpy as np
 
@@ -22,7 +22,7 @@ def load_test_data():
 # Function to evaluate the model
 def evaluate_model(pred_file):
     # Load model and weights
-    model = BaseNet().to(device)
+    model = NonsenseNet().to(device)
     model.load_state_dict(torch.load(pred_file, map_location=device))
     model.eval()  # Set model to evaluation mode
 

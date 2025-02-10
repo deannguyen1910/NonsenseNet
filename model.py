@@ -3,9 +3,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import os
 
-class BaseNet(nn.Module):
+class NonsenseNet(nn.Module):
     def __init__(self):
-        super(BaseNet, self).__init__()
+        super(NonsenseNet, self).__init__()
         
         # Convolutional Layers
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5)
