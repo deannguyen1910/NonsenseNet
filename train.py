@@ -16,22 +16,29 @@ print(f"Using device: {device}")
 def load_all_batches():
     data = []
     labels = []
-    for i in range(1, 6):  # Assuming 5 data batches
+    for i in range(1, 6):  # Assuming 5 data batches (CIFAR-10)
         batch_path = f"data/cifar-10-batches-py/data_batch_{i}"
         with open(batch_path, 'rb') as file:
             batch = pickle.load(file, encoding='bytes')
             data.append(batch[b'data'])
             labels.append(batch[b'labels'])
-    data = np.concatenate(data, axis=0)
+
+    # Convert to NumPy arrays
+    data = np.concatenate(data, axis=0).astype(np.float32) / 255.0  # Normalize to [0,1]
     labels = np.concatenate(labels, axis=0)
+
+    # Reshape for CNN input (N, 3, 32, 32)
+    data = data.reshape(-1, 3, 32, 32)
+
+    # Shuffle dataset
     indices = np.arange(len(data))
     np.random.shuffle(indices)
+
     return torch.tensor(data[indices], dtype=torch.float32), torch.tensor(labels[indices], dtype=torch.long)
 
 # Load dataset
 train_data, train_labels = load_all_batches()
-train_data = train_data.view(-1, 3, 32, 32).to(device)  # Reshape for CNN input
-train_labels = train_labels.to(device)
+train_data, train_labels = train_data.to(device), train_labels.to(device)
 
 # Set batch size and DataLoader
 batch_size = 64
@@ -51,11 +58,14 @@ def kaiming_init(m):
         if m.bias is not None:
             torch.nn.init.zeros_(m.bias)  # Set bias to zero
 
-# model.apply(kaiming_init)  # Apply initialization
+model.apply(kaiming_init)  # Apply initialization
 
-# Loss and optimizer
+# Loss function and optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Learning rate scheduler (reduces LR by 50% every 10 epochs)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.5)
 
 # Training loop
 for epoch in range(1, max_epochs + 1):
@@ -75,6 +85,9 @@ for epoch in range(1, max_epochs + 1):
 
     avg_train_loss = epoch_loss / len(train_loader)
     print(f"Epoch [{epoch}/{max_epochs}], Training Loss: {avg_train_loss:.4f}")
+
+    # Step the learning rate scheduler
+    scheduler.step()
 
     # Save model predictions and run evaluation every 10 epochs
     if epoch % 10 == 0:

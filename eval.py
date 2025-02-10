@@ -10,7 +10,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.ba
 
 # Function to load test data
 def load_test_data():
-    test_path = "data/test_batch"  # Adjust if needed
+    test_path = "data/cifar-10-batches-py/test_batch"  # Adjust if needed
     with open(test_path, 'rb') as file:
         batch = pickle.load(file, encoding='bytes')
         test_data = torch.tensor(batch[b'data'], dtype=torch.float32)
@@ -42,7 +42,7 @@ def evaluate_model(pred_file):
 # Run evaluation if script is called directly
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python eval.py <predictions.pth>")
+        print("Usage: python eval.py <output.pth>")
         sys.exit(1)
 
     pred_file = sys.argv[1]  # Get predictions file from command line
